@@ -1,24 +1,32 @@
 package tv.twitch;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
+import java.time.Duration;
 import static org.junit.Assert.assertEquals;
 
 public class AuthorizationOnTwitch {
 
+    public OperaDriver driver;
+
+    @Before
+    public void setUp() {
+        System.setProperty("webdriver.opera.driver","/WebDrivers/operadriver_win64/operadriver.exe");
+        driver = new OperaDriver();
+    }
+
     @Test
     public void successAuthorizationOnTwitch() {
-        System.setProperty("webdriver.opera.driver","/WebDrivers/operadriver_win64/operadriver.exe");
-        OperaDriver driver = new OperaDriver();
         driver.get("https://www.twitch.tv/");
         WebElement AnonUserLoginButtonFirstClick = driver.findElement(By.cssSelector("[data-test-selector='anon-user-menu__login-button']"));
         AnonUserLoginButtonFirstClick.click();
-        WebElement userName = (WebElement) new WebDriverWait(driver, 10)
+        WebElement userName = (new WebDriverWait(driver, Duration.ofSeconds(10)))
                 .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@autocomplete='username']")));
         userName.sendKeys("TestUserrr2");
         WebElement userPassword = driver.findElement(By.xpath("//input[@autocomplete='current-password']"));
@@ -35,12 +43,10 @@ public class AuthorizationOnTwitch {
 
     @Test
     public void failedAuthorizationOnTwitchUnknownUser() {
-        System.setProperty("webdriver.opera.driver","/WebDrivers/operadriver_win64/operadriver.exe");
-        OperaDriver driver = new OperaDriver();
         driver.get("https://www.twitch.tv/");
         WebElement AnonUserLoginButtonFirstClick = driver.findElement(By.cssSelector("[data-test-selector='anon-user-menu__login-button']"));
         AnonUserLoginButtonFirstClick.click();
-        WebElement userName = (WebElement) new WebDriverWait(driver, 10)
+        WebElement userName = (new WebDriverWait(driver, Duration.ofSeconds(10)))
                 .until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@autocomplete='username']")));
         userName.sendKeys("T");
         WebElement userPassword = driver.findElement(By.xpath("//input[@autocomplete='current-password']"));
@@ -54,4 +60,8 @@ public class AuthorizationOnTwitch {
         assertEquals(expectedText, actualText.strip());
     }
 
+    @After
+    public void finish() {
+        driver.quit();
+    }
 }
